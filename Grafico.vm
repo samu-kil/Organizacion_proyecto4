@@ -1,0 +1,98 @@
+// Grafico.vm - Rutinas graficas escritas a mano en lenguaje VM (seccion 9).
+// Autor 1:
+// Autor 2:
+// Autor 3:
+// No debe existir Grafico.jack. No se permite llamar a Memory.poke,
+// Memory.peek ni Math.multiply.
+
+// dibujarCelda(fila, col, sprite)
+// argument 0 = fila (0..15)
+// argument 1 = col (0..31)
+// argument 2 = direccion del Array de 16 palabras del sprite.
+//
+// RAM[16384 + fila*512 + k*32 + col] = sprite[k].
+
+function Grafico.dibujarCelda 3
+
+// local 0 = contador
+// local 1 = direccion de pantalla
+// local 2 = auxiliar para fila
+
+// Calcular direccion inicial: 16384 + fila*512 + col
+push constant 16384
+pop local 1
+
+push argument 0
+pop local 2
+
+label CALCULAR_FILA
+push local 2
+push constant 0
+eq
+if-goto FIN_FILA
+
+push local 1
+push constant 512
+add
+pop local 1
+
+push local 2
+push constant 1
+sub
+pop local 2
+
+goto CALCULAR_FILA
+
+label FIN_FILA
+
+push local 1
+push argument 1
+add
+pop local 1
+
+// Apuntar al sprite.
+push argument 2
+pop pointer 0
+
+// Inicializar contador.
+push constant 16
+pop local 0
+
+label COPIAR_LINEA
+
+// Leer la palabra del sprite (THIS).
+push this 0
+
+// Apuntar a la direccion de pantalla (THAT).
+push local 1
+pop pointer 1
+
+// Escribir palabra.
+pop that 0
+
+// Avanzar una palabra en el sprite.
+push pointer 0
+push constant 1
+add
+pop pointer 0
+
+// Avanzar 32 palabras en pantalla.
+push local 1
+push constant 32
+add
+pop local 1
+
+// Reducir contador.
+push local 0
+push constant 1
+sub
+pop local 0
+
+// Repetir.
+push local 0
+push constant 0
+gt
+if-goto COPIAR_LINEA
+
+push constant 0
+return

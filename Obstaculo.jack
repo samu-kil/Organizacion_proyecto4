@@ -1,0 +1,70 @@
+/*********
+* Obstaculo.jack - Representa los obstaculos del juego.
+* Autor 1: Ashly Robayo
+* Autor 2: Samuel Quintero
+*********/
+class Obstaculo {
+    field int tipo, carril, col, colAnterior;
+    field int largo, velocidad;
+
+    /** Crea un obstaculo segun su tipo. */
+    constructor Obstaculo new(int unTipo, int unCarril, int unaCol) {
+        let tipo = unTipo;
+        let carril = unCarril;
+        let col = unaCol;
+        let colAnterior = unaCol;
+        let largo = 1;
+        let velocidad = 1;
+        if (unTipo = 1) { let largo = 3; }
+        if (unTipo = 2) { let velocidad = 2; }
+        return this;
+    }
+
+    /** Guarda la posicion anterior y mueve el obstaculo. */
+    method void mover() {
+        let colAnterior = col;
+        let col = col - velocidad;
+        return;
+    }
+
+    /** Comprueba si el obstaculo salio por la izquierda. */
+    method boolean salio() {
+        return ((col + largo) - 1) < 0;
+    }
+
+    /** Comprueba si ocupa una columna actualmente. */
+    method boolean ocupa(int c) {
+        return ~(c < col) & ~(c > ((col + largo) - 1));
+    }
+
+    /** Comprueba si cruzo la columna del carro durante el paso. */
+    method boolean tocaCarro(int c) {
+        return ~(col > c) & ~(c > (colAnterior + largo - 1));
+    }
+
+    /** Las monedas no son letales. */
+    method boolean esLetal() {
+        return ~(tipo = 3);
+    }
+
+    /** Devuelve los puntos que aporta el obstaculo. */
+    method int puntos() {
+        if (tipo = 3) { return 10; }
+        return 0;
+    }
+
+    method int getTipo() { return tipo; }
+    method int getCarril() { return carril; }
+    method int getCol() { return col; }
+
+    /** Libera la memoria del obstaculo. */
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Comprueba si alguna celda del obstaculo cruza un rango. */
+    method boolean enRango(int desde, int hasta) {
+        return ~(col > hasta) & ~(((col + largo) - 1) < desde);
+    }
+}

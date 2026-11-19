@@ -1,0 +1,14 @@
+# Salidas de las pruebas y archivos temporales
+*.out
+*.tmp
+Carrera.vm
+Juego.vm
+Main.vm
+Obstaculo.vm
+Sprites.vm
+Vista.vm
+.DS_Store
+Thumbs.db
+
+# IMPORTANTE: no ignore *.vm. Grafico.vm (y Aleatorio.vm, si lo hacen) estan
+# escritos a mano y deben subirse al repositorio.
