@@ -63,17 +63,8 @@ pop local 0
 
 label COPIAR_LINEA
 
-// Leer palabra del sprite.
-push pointer 0
-pop that
-
-push that 0
-
-// Direccion de destino.
-push pointer 1
-pop that
-
-// Escribir en pantalla.
+// Copiar la palabra del sprite a la pantalla.
+push this 0
 pop that 0
 
 // Avanzar uno en el sprite.
