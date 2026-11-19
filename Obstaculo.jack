@@ -1,10 +1,14 @@
-class Obstaculos {
+/** Autor: samuel quintero quintero */
+
+class Obstaculo {
 field int tipo, carril, col, colAnterior, largo, velocidad;
 
 /** construye un obstaculo */
+constructor Obstaculo new(int unTipo, int unCarril, int unaCol) {
 
 let tipo = unTipo;
 let carril = unCarril;
+let col = unaCol;
 let colAnterior = unaCol;
 let largo = 1;
 let velocidad = 1;
@@ -19,9 +23,14 @@ return this;
         return;
 
  }
+ /** verdadero si el obstaculo toca al carro en la columna colCarro */
+ method boolean tocaCarro(int colCarro) {
+   return ~(col > colCarro) & ~(colCarro > ((colAnterior + largo) - 1));
+    }
  /** verdadero si sale completo a la izquierda */
  method boolean salio() {
         return ((col + largo) - 1) < 0;
+ }
 /** verdadero si el obstaculo ocupa el carril C */
  method boolean ocupa(int c) {
         return ~(c < col) & ~(c > ((col + largo) - 1));
