@@ -7,7 +7,8 @@
 * Autor 3:
 *********/
 class Carrera {
-    // COMPLETAR: campos
+ field Array obs;
+    field int n, carroCarril, pedido, vidas, puntaje, progreso, estado, meta, x;
 
     /** Nueva carrera: carro en el carril 1, 3 vidas, puntaje 0, progreso 0,
         estado 0 y sin obstaculos. semilla inicializa el generador. */
@@ -22,7 +23,6 @@ class Carrera {
         let estado = 0;
         let meta = pasosMeta;
         let x = semilla;
-        return this;
         return this;
     }
 
@@ -45,6 +45,7 @@ class Carrera {
     method void moverCarro(int dir) {
     if ((estado = 0) & ((dir = -1) | (dir = 1))) {
     let pedido = dir;
+    }
     return;
     }
 
@@ -140,7 +141,34 @@ method void quitar(int i) {
         if (progreso = meta) { let estado = 2; }
         return;
     }
+    /** Siguiente numero pseudoaleatorio entre 0 y m - 1 (x = 5x + 3). */
+    method int aleatorio(int m) {
+        var int v;
+        let x = (x * 5) + 3;
+        let v = (x & 32767) / 128;
+        return v - ((v / m) * m);
+    }
 
+    /** siguiente carril al c, dando la vuelta: 0, 1, 2, 0... */
+    method int siguienteCarril(int c) {
+        if (c = 2) { return 0; }
+        return c + 1;
+    }
+
+    /** verdaderosi el carril c tiene un obstaculo letal en columnas 26 a 31. */
+    method boolean hayLetalCerca(int c) {
+        var int i;
+        var Obstaculo o;
+        let i = 0;
+        while (i < n) {
+        let o = obs[i];
+        if ((o.getCarril() = c) & o.esLetal() & o.enRango(26, 31)) {
+        return true;
+            }
+        let i = i + 1;
+        }
+        return false;
+    }
     /** Agrega a lo sumo un obstaculo en la columna 31 (seccion 8.4). */
     method void generar() {
         var int tipo, lane, otro1, otro2;
@@ -160,8 +188,8 @@ method void quitar(int i) {
 
     /** Carril del carro: 0, 1 o 2. */
     method int carrilCarro() {
-        // COMPLETAR
-        return 1;
+
+        return carroCarril;
     }
 
     /** Tipo del obstaculo que ocupa (carril, col), o -1 si esta libre. */
@@ -207,3 +235,4 @@ method void quitar(int i) {
         return n;
     }
 }
+
