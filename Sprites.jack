@@ -1,0 +1,148 @@
+/*********
+* Sprites.jack - Dibujo de 16 x 16 pixeles de cada objeto del juego.
+* Cada funcion devuelve un Array de 16 palabras (una por linea de la celda).
+* El bit 0 de cada palabra es el pixel de la izquierda.
+* Autor 1:
+* Autor 2:
+* Autor 3:
+*********/
+class Sprites {
+
+    /** Carro del jugador. */
+    function Array auto() {
+        var Array s;
+        let s = Array.new(16);
+        let s[0] = 0;
+        let s[1] = 0;
+        let s[2] = 0;
+        let s[3] = 8160;
+        let s[4] = 16368;
+        let s[5] = 29496;
+        let s[6] = -6244;
+        let s[7] = -2;
+        let s[8] = -1;
+        let s[9] = -1;
+        let s[10] = -1;
+        let s[11] = 32766;
+        let s[12] = 15420;
+        let s[13] = 32382;
+        let s[14] = 32382;
+        let s[15] = 15420;
+        return s;
+    }
+
+    /** Cono (tipo 0). */
+    function Array cono() {
+        var Array s;
+        let s = Array.new(16);
+        let s[0] = 0;
+        let s[1] = 0;
+        let s[2] = 384;
+        let s[3] = 384;
+        let s[4] = 960;
+        let s[5] = 960;
+        let s[6] = 2016;
+        let s[7] = 1056;
+        let s[8] = 4080;
+        let s[9] = 4080;
+        let s[10] = 8184;
+        let s[11] = 8184;
+        let s[12] = 16380;
+        let s[13] = 32766;
+        let s[14] = 32766;
+        let s[15] = 0;
+        return s;
+    }
+
+    /** Una celda de camion (tipo 1); el camion usa 3. */
+    function Array camion() {
+        var Array s;
+        let s = Array.new(16);
+        let s[0] = 0;
+        let s[1] = -2;
+        let s[2] = -1;
+        let s[3] = -1;
+        let s[4] = -1;
+        let s[5] = -1;
+        let s[6] = -1;
+        let s[7] = -1;
+        let s[8] = -1;
+        let s[9] = -1;
+        let s[10] = -1;
+        let s[11] = -1;
+        let s[12] = -1;
+        let s[13] = -6194;
+        let s[14] = -2082;
+        let s[15] = 25484;
+        return s;
+    }
+
+    /** Moto (tipo 2). */
+    function Array moto() {
+        var Array s;
+        let s = Array.new(16);
+        let s[0] = 0;
+        let s[1] = 0;
+        let s[2] = 0;
+        let s[3] = 512;
+        let s[4] = 1792;
+        let s[5] = 384;
+        let s[6] = 448;
+        let s[7] = 496;
+        let s[8] = 920;
+        let s[9] = 1804;
+        let s[10] = 7998;
+        let s[11] = 25443;
+        let s[12] = 16833;
+        let s[13] = 16705;
+        let s[14] = 25443;
+        let s[15] = 15934;
+        return s;
+    }
+
+    /** Moneda (tipo 3). */
+    function Array moneda() {
+        var Array s;
+        let s = Array.new(16);
+        let s[0] = 0;
+        let s[1] = 0;
+        let s[2] = 2016;
+        let s[3] = 4080;
+        let s[4] = 7224;
+        let s[5] = 15324;
+        let s[6] = 14316;
+        let s[7] = 14316;
+        let s[8] = 14316;
+        let s[9] = 14316;
+        let s[10] = 15324;
+        let s[11] = 7224;
+        let s[12] = 4080;
+        let s[13] = 2016;
+        let s[14] = 0;
+        let s[15] = 0;
+        return s;
+    }
+
+    /** Celda vacia. */
+    function Array vacio() {
+        var Array s;
+        let s = Array.new(16);
+        let s[0] = 0;
+        let s[1] = 0;
+        let s[2] = 0;
+        let s[3] = 0;
+        let s[4] = 0;
+        let s[5] = 0;
+        let s[6] = 0;
+        let s[7] = 0;
+        let s[8] = 0;
+        let s[9] = 0;
+        let s[10] = 0;
+        let s[11] = 0;
+        let s[12] = 0;
+        let s[13] = 0;
+        let s[14] = 0;
+        let s[15] = 0;
+        return s;
+    }
+}

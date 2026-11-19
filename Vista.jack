@@ -1,0 +1,205 @@
+/*********
+* Vista.jack - Todo lo que se dibuja: via, auto, obstaculos, marcador,
+* barra de progreso y pantallas de texto. Solo lee la Carrera con su
+* interfaz publica. Cada objeto tiene su funcion de dibujo y todas dibujan
+* con Grafico.dibujarCelda (escrita en VM).
+* Autor 1:
+* Autor 2:
+* Autor 3:
+*********/
+class Vista {
+    field Array sprAuto, sprCono, sprCamion, sprMoto, sprMoneda, sprVacio;
+    field int meta;   // pasos de la meta de la partida actual
+
+    /** Crea la vista con los sprites de los objetos. */
+    constructor Vista new() {
+        let sprAuto = Sprites.auto();
+        let sprCono = Sprites.cono();
+        let sprCamion = Sprites.camion();
+        let sprMoto = Sprites.moto();
+        let sprMoneda = Sprites.moneda();
+        let sprVacio = Sprites.vacio();
+        return this;
+    }
+
+    /** Libera los sprites y la vista. */
+    method void dispose() {
+        do sprAuto.dispose();
+        do sprCono.dispose();
+        do sprCamion.dispose();
+        do sprMoto.dispose();
+        do sprMoneda.dispose();
+        do sprVacio.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Limpia la pantalla y dibuja lo que no cambia: via, marcador y ayuda. */
+    method void prepararCarrera(int pasosMeta) {
+        let meta = pasosMeta;
+        do Screen.clearScreen();
+        do Screen.drawRectangle(0, 72, 511, 75);
+        do Screen.drawRectangle(0, 164, 511, 167);
+        do Screen.drawLine(0, 104, 511, 104);
+        do Screen.drawLine(0, 136, 511, 136);
+        do escribir(0, 0, "Vidas:");
+        do escribir(0, 14, "Puntaje:");
+        do escribir(0, 32, "Meta:");
+        do Output.moveCursor(0, 38);
+        do Output.printInt(meta);
+        do escribir(17, 8, "Flechas: carril   P: pausa   R: reiniciar   ESC: salir");
+        return;
+    }
+
+    /** Escribe s en (fila, col) del texto y la libera, para no gastar el heap. */
+    method void escribir(int fila, int col, String s) {
+        do Output.moveCursor(fila, col);
+        do Output.printString(s);
+        do s.dispose();
+        return;
+    }
+
+    /** Dibuja un paso completo: los tres carriles, el marcador y la barra. */
+    method void actualizar(Carrera c) {
+        var int carril;
+        let carril = 0;
+        while (carril < 3) {
+            do dibujarCarril(c, carril);
+            let carril = carril + 1;
+        }
+        do Output.moveCursor(0, 7);
+        do Output.printInt(c.vidas());
+        do Output.moveCursor(0, 23);
+        do Output.printInt(c.puntaje());
+        do dibujarProgreso(c.progreso());
+        return;
+    }
+
+    /** Dibuja las 32 celdas de un carril: el auto en la columna 2 y lo que haya. */
+    method void dibujarCarril(Carrera c, int carril) {
+        var int col;
+        let col = 0;
+        while (col < 32) {
+            if ((carril = c.carrilCarro()) & (col = 2)) {
+                do dibujarAuto(carril);
+            } else {
+                do dibujarObjeto(c.ocupada(carril, col), carril, col);
+            }
+            let col = col + 1;
+        }
+        return;
+    }
+
+    /** Dibuja el objeto del tipo dado (0 cono, 1 camion, 2 moto, 3 moneda, -1 nada). */
+    method void dibujarObjeto(int tipo, int carril, int col) {
+        if (tipo = -1) { do dibujarVacio(carril, col); }
+        if (tipo = 0) { do dibujarCono(carril, col); }
+        if (tipo = 1) { do dibujarCamion(carril, col); }
+        if (tipo = 2) { do dibujarMoto(carril, col); }
+        if (tipo = 3) { do dibujarMoneda(carril, col); }
+        return;
+    }
+
+    /** Dibuja el auto en la columna 2 del carril. */
+    method void dibujarAuto(int carril) {
+        do celda(carril, 2, sprAuto);
+        return;
+    }
+
+    /** Dibuja un cono. */
+    method void dibujarCono(int carril, int col) {
+        do celda(carril, col, sprCono);
+        return;
+    }
+
+    /** Dibuja una celda de camion. */
+    method void dibujarCamion(int carril, int col) {
+        do celda(carril, col, sprCamion);
+        return;
+    }
+
+    /** Dibuja una moto. */
+    method void dibujarMoto(int carril, int col) {
+        do celda(carril, col, sprMoto);
+        return;
+    }
+
+    /** Dibuja una moneda. */
+    method void dibujarMoneda(int carril, int col) {
+        do celda(carril, col, sprMoneda);
+        return;
+    }
+
+    /** Dibuja una celda vacia. */
+    method void dibujarVacio(int carril, int col) {
+        do celda(carril, col, sprVacio);
+        return;
+    }
+
+    /** Dibuja sprite en la celda del carril (los carriles 0, 1 y 2 estan en las filas 5, 7 y 9). */
+    method void celda(int carril, int col, Array sprite) {
+        do Grafico.dibujarCelda(5 + carril + carril, col, sprite);
+        return;
+    }
+
+    /** Barra de progreso en la fila de celdas 2: un rectangulo que crece hasta la meta. */
+    method void dibujarProgreso(int progreso) {
+        var int segmentos;
+        let segmentos = (progreso * 32) / meta;
+        if (segmentos > 0) {
+            do Screen.drawRectangle(0, 36, (segmentos * 16) - 1, 43);
+        }
+        return;
+    }
+
+    /** Pantalla inicial con instrucciones y las tres distancias. */
+    method void dibujarMenu() {
+        do Screen.clearScreen();
+        do escribir(2, 19, "CARRERA DE TRES CARRILES");
+        do escribir(5, 12, "Flecha arriba / abajo: cambiar de carril");
+        do escribir(6, 12, "P: pausa    R: reiniciar    ESC: salir");
+        do escribir(8, 12, "Cono, camion y moto quitan una vida.");
+        do escribir(9, 12, "Cada moneda suma 10 puntos.");
+        do escribir(12, 12, "Elige la distancia a la meta:");
+        do escribir(14, 16, "1) Corta  (50 pasos)");
+        do escribir(15, 16, "2) Media  (100 pasos)");
+        do escribir(16, 16, "3) Larga  (200 pasos)");
+        return;
+    }
+
+    /** Muestra el mensaje de pausa. */
+    method void dibujarPausa() {
+        do escribir(20, 15, "PAUSA - presione P para continuar");
+        return;
+    }
+
+    /** Borra la zona de mensajes (parte baja de la pantalla). */
+    method void borrarMensaje() {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(0, 208, 511, 255);
+        do Screen.setColor(true);
+        return;
+    }
+
+    /** Muestra el resultado (estado 2 = victoria, otro = derrota) y el puntaje. */
+    method void dibujarFin(int estado, int puntaje) {
+        do borrarMensaje();
+        if (estado = 2) {
+            do escribir(19, 26, "VICTORIA!");
+        } else {
+            do escribir(19, 26, "DERROTA");
+        }
+        do escribir(20, 22, "Puntaje:");
+        do Output.moveCursor(20, 31);
+        do Output.printInt(puntaje);
+        do escribir(21, 14, "R: volver al inicio    ESC: salir");
+        return;
+    }
+
+    /** Pantalla de despedida. */
+    method void dibujarDespedida() {
+        do Screen.clearScreen();
+        do escribir(10, 22, "Gracias por jugar!");
+        return;
+    }
+}

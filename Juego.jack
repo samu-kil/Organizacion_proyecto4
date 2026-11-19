@@ -1,0 +1,138 @@
+/*********
+* Juego.jack - Controlador: une la logica (Carrera) con la presentacion
+* (Vista) y el teclado. Maneja el menu, el bucle de la carrera, la pausa,
+* el reinicio y la salida.
+* Autor 1:
+* Autor 2:
+* Autor 3:
+*********/
+class Juego {
+    field Vista vista;
+    field Carrera carrera;
+    field int anterior;               // tecla del paso anterior
+    field int semilla;                // semilla de la proxima carrera
+    field boolean salir, reiniciar;   // ESC termina, R vuelve al menu
+
+    /** Crea el juego con su vista. */
+    constructor Juego new() {
+        let vista = Vista.new();
+        let anterior = 0;
+        let semilla = 1;
+        let salir = false;
+        let reiniciar = false;
+        return this;
+    }
+
+    /** Libera la vista y el juego. */
+    method void dispose() {
+        do vista.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Repite menu y partida hasta que se pulse ESC. */
+    method void ejecutar() {
+        var int pasos;
+        while (~salir) {
+            let reiniciar = false;
+            let pasos = elegirMeta();
+            if (~salir) {
+                do partida(pasos);
+            }
+        }
+        do vista.dibujarDespedida();
+        return;
+    }
+
+    /** Muestra el menu y devuelve la meta elegida (50, 100 o 200 pasos). */
+    method int elegirMeta() {
+        var int tecla, pasos;
+        do vista.dibujarMenu();
+        let anterior = Keyboard.keyPressed();
+        let pasos = 0;
+        while ((pasos = 0) & (~salir)) {
+            let tecla = leerTecla();
+            if (tecla = 49) { let pasos = 50; }
+            if (tecla = 50) { let pasos = 100; }
+            if (tecla = 51) { let pasos = 200; }
+            if (tecla = 140) { let salir = true; }
+            let semilla = semilla + 1;
+            if (semilla > 30000) { let semilla = 1; }
+        }
+        return pasos;
+    }
+
+    /** Devuelve la tecla solo en el paso en que se presiona (0 si no cambio). */
+    method int leerTecla() {
+        var int tecla;
+        let tecla = Keyboard.keyPressed();
+        if (tecla = anterior) {
+            return 0;
+        }
+        let anterior = tecla;
+        return tecla;
+    }
+
+    /** Juega una partida: la carrera, el resultado y la liberacion de la Carrera. */
+    method void partida(int pasos) {
+        let carrera = Carrera.new(pasos, semilla);
+        do vista.prepararCarrera(pasos);
+        do vista.actualizar(carrera);
+        let anterior = Keyboard.keyPressed();
+        do correr();
+        if ((carrera.estado() > 0) & (~salir) & (~reiniciar)) {
+            do finalizar();
+        }
+        do carrera.dispose();
+        return;
+    }
+
+    /** Bucle de la carrera: lee tecla, avanza, genera, dibuja y espera. */
+    method void correr() {
+        while ((carrera.estado() = 0) & (~salir) & (~reiniciar)) {
+            do atender(leerTecla());
+            do carrera.avanzar();
+            do carrera.generar();
+            do vista.actualizar(carrera);
+            do Sys.wait(100);
+        }
+        return;
+    }
+
+    /** Ejecuta la accion de la tecla: flechas, P, R o ESC. */
+    method void atender(int tecla) {
+        if (tecla = 131) { do carrera.moverCarro(-1); }
+        if (tecla = 133) { do carrera.moverCarro(1); }
+        if (tecla = 80) { do pausar(); }
+        if (tecla = 82) { let reiniciar = true; }
+        if (tecla = 140) { let salir = true; }
+        return;
+    }
+
+    /** Detiene la carrera hasta que se pulse P otra vez. */
+    method void pausar() {
+        var int tecla;
+        do vista.dibujarPausa();
+        let tecla = 0;
+        while ((~(tecla = 80)) & (~salir) & (~reiniciar)) {
+            let tecla = leerTecla();
+            if (tecla = 82) { let reiniciar = true; }
+            if (tecla = 140) { let salir = true; }
+        }
+        do vista.borrarMensaje();
+        return;
+    }
+
+    /** Muestra el resultado y espera R (volver al inicio) o ESC (salir). */
+    method void finalizar() {
+        var int tecla;
+        do vista.dibujarFin(carrera.estado(), carrera.puntaje());
+        let anterior = Keyboard.keyPressed();
+        while ((~salir) & (~reiniciar)) {
+            let tecla = leerTecla();
+            if (tecla = 82) { let reiniciar = true; }
+            if (tecla = 140) { let salir = true; }
+        }
+        return;
+    }
+}
