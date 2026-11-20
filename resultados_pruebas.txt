@@ -1,0 +1,27 @@
+== carrera
+   OK    carrera01: Estado inicial de una carrera nueva
+   OK    carrera02: Cambios de carril y limites (no sale de los carriles 0 a 2)
+   OK    carrera03: El cambio de carril se aplica en avanzar y vale la ultima solicitud
+   OK    carrera04: Un cono avanza una celda por paso
+   OK    carrera05: Un camion ocupa tres celdas; las celdas fuera de pantalla no cuentan
+   OK    carrera06: Una moto avanza dos celdas por paso
+   OK    carrera07: Choque con un cono: pierde una vida y el cono desaparece
+   OK    carrera08: Una moto que salta sobre el carro tambien choca
+   OK    carrera09: Cambiar de carril hacia un obstaculo produce choque
+   OK    carrera10: Cambiar de carril a tiempo esquiva el obstaculo
+   OK    carrera11: Una moneda suma 10 puntos y no quita vidas
+   OK    carrera12: Los obstaculos que salen por la izquierda se eliminan
+   OK    carrera13: Derrota al perder la tercera vida; despues nada cambia
+   OK    carrera14: Victoria al llegar a la meta; despues nada cambia
+   OK    carrera15: Dos choques en el mismo paso
+   OK    carrera16: La parte trasera de un camion tambien choca
+   OK    carrera17: Generacion: 300 pasos; regla de paso libre, uno por paso, 3 carriles, 3 tipos
+   OK    carrera18: Fugas de memoria: con el heap casi lleno, 800 obstaculos y 120 carreras se liberan
+== grafico
+   OK    grafico01: Celda (0, 0): esquina superior izquierda
+   FALLO grafico02: Celda (15, 31): esquina inferior derecha
+         'That' segment must be in the Heap or Screen range in Grafico.dibujarCelda.35
+         esperado:  1 -1 -32768 2007 3007 4007 5007 6007 7007 8007 9007 10007 11007 12007 13007 14007 15007 0 0 111 222 5007 
+         obtenido: 
+   OK    grafico03: Celda (7, 12): celda central
+Total: 20/21 casos aprobados
